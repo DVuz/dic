@@ -320,7 +320,7 @@ function getFullAudioUrl(src: string | undefined): string {
   return src.startsWith('http') ? src : `https://dictionary.cambridge.org${src}`;
 }
 
-export async function crawlCambridgeWord(word: string): Promise<CambridgeWord | null> {
+async function crawlCambridgeWord(word: string): Promise<CambridgeWord | null> {
   try {
     const url = `https://dictionary.cambridge.org/dictionary/english/${encodeURIComponent(
       word.trim()
