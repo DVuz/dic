@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
   // Xử lý CORS cho API routes TRƯỚC KHI áp dụng auth
   if (request.nextUrl.pathname.startsWith('/api/')) {
-    const origin = request.headers.get('origin') || 'https://www.speedtest.net';
+    const origin = request.headers.get('origin') || '*';
 
     // Handle preflight OPTIONS requests
     if (request.method === 'OPTIONS') {
@@ -21,18 +21,18 @@ export default function middleware(request: NextRequest, event: NextFetchEvent) 
       });
     }
 
-    // Cho các API requests khác, thêm CORS headers
+    // ❌ QUAN TRỌNG: KHÔNG áp dụng withAuth cho API routes
+    // Chỉ thêm CORS headers và return response
     const response = NextResponse.next();
     response.headers.set('Access-Control-Allow-Origin', origin);
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
     response.headers.set('Access-Control-Allow-Credentials', 'true');
-    response.headers.set('Access-Control-Max-Age', '86400');
 
     return response;
   }
 
-  // Cho các routes không phải API, áp dụng NextAuth middleware
+  // Chỉ áp dụng NextAuth middleware cho non-API routes
   return withAuth(
     function authMiddleware(req) {
       const { pathname } = req.nextUrl;
@@ -66,15 +66,20 @@ export default function middleware(request: NextRequest, event: NextFetchEvent) 
 
 export const config = {
   matcher: [
-    // Bao gồm API routes để xử lý CORS
-    '/api/:path*',
-    // Protected routes cần auth
+    // ❌ LOẠI BỎ /api/:path* khỏi matcher để tránh conflict
+    // '/api/:path*',  // ← XÓA dòng này
+
+    // Chỉ match non-API routes cần auth
     '/home/:path*',
     '/lookup/:path*',
     '/vocabulary/:path*',
     '/profile/:path*',
     '/admin/:path*',
-    // Loại trừ các file static
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/reviewHistory/:path*', // ← Thêm route này
+    '/review/:path*',
+    '/wordlist/:path*',
+
+    // Match tất cả routes trừ public routes và static files
+    '/((?!login|register|api|_next/static|_next/image|favicon.ico|$).*)',
   ],
 };
