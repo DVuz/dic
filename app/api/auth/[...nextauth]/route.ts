@@ -75,11 +75,12 @@ const handler = NextAuth({
       return token;
     },
     async redirect({ url, baseUrl }) {
-      // Redirect về trang home sau khi đăng nhập thành công
+      // Nếu url hợp lệ (bắt đầu bằng / hoặc baseUrl) thì redirect đến đó
       if (url.startsWith('/') || url.startsWith(baseUrl)) {
-        return `${baseUrl}/home`;
+        return url;
       }
-      return baseUrl;
+      // Fallback mặc định về /home
+      return `${baseUrl}/home`;
     },
   },
   session: {
