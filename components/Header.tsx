@@ -27,7 +27,12 @@ import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { data: session, status } = useSession();
-  console.log('Header', session);
+  console.log('🔍 Header Debug:', {
+    status,
+    hasSession: !!session,
+    userEmail: session?.user?.email,
+    currentUrl: typeof window !== 'undefined' ? window.location.href : 'SSR',
+  });
   const router = useRouter();
 
   const handleSignOut = () => {
