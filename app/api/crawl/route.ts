@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
 import { PrismaClient } from '@prisma/client';
+import * as cheerio from 'cheerio';
+import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
